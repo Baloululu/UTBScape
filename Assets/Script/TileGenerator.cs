@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class TileGenerator
 {
 
@@ -10,7 +11,14 @@ public class TileGenerator
 
     private float minHeight;
 
+    public TileGenerator(){}
+
     public TileGenerator(GameObject tile)
+    {
+        initialized(tile);
+    }
+
+    public void initialized(GameObject tile)
     {
         this.tile = tile;
         originale = tile.GetComponent<MeshFilter>().sharedMesh;
@@ -32,8 +40,6 @@ public class TileGenerator
     public GameObject GenerateTile(Vector3 pos)
     {
         GameObject instance = GameObject.Instantiate(tile, pos, Quaternion.identity) as GameObject;
-        instance.transform.position = pos;
-        instance.transform.rotation = Quaternion.identity;
         Mesh mesh = GameObject.Instantiate(originale) as Mesh;
 
         Vector3[] vertices = originale.vertices;
@@ -46,6 +52,7 @@ public class TileGenerator
         }
 
         mesh.vertices = vertices;
+        mesh.RecalculateBounds();
 
         instance.GetComponent<MeshFilter>().sharedMesh = mesh;
 
