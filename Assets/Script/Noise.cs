@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Noise : MonoBehaviour {
 
-	public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, float scale, int seed, int octaves, float persistance, float lacunarity)
+    public static int[,] GenerateRegionMap(int mapWidth, int mapHeight, float scale, int seed, int octaves, float persistance, float lacunarity, bool useFalloff, float[,] falloffMap, TerrainType[] regions)
     {
         float[,] noiseMap = new float[mapWidth, mapHeight];
+        int[,] regionMap = new int[mapWidth, mapHeight];
 
         System.Random prng = new System.Random(seed);
         Vector2[] octaveOffsets = new Vector2[octaves];
@@ -48,12 +50,12 @@ public class Noise : MonoBehaviour {
                     frequency *= lacunarity;
                 }
 
+                noiseMap[x, y] = noiseHeight;
+
                 if (noiseHeight > maxNoiseHeight)
                     maxNoiseHeight = noiseHeight;
                 else if (noiseHeight < minNoiseHeight)
                     minNoiseHeight = noiseHeight;
-
-                noiseMap[x, y] = noiseHeight;
             }
         }
 
@@ -62,9 +64,23 @@ public class Noise : MonoBehaviour {
             for (int x = 0; x < mapWidth; x++)
             {
                 noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
+
+                if (useFalloff)
+                    noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x, y]);
+
+                float currentHeight = noiseMap[x, y];
+
+                for (int i = 0; i < regions.Length; i++)
+                {
+                    if (currentHeight <= regions[i].height)
+                    {
+                        regionMap[x, y] = i;
+                        break;
+                    }
+                }
             }
         }
 
-        return noiseMap;
+        return regionMap;
     }
 }
