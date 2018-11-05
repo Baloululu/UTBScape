@@ -1,4 +1,5 @@
 # Projet VI50 TODO
+
 1. Faire une structure de données de tile pour stocker les caractéristiques :
     + Type de la case
     + Contraintes : accessibilité, coût de déplacement, ...etc 
@@ -7,7 +8,9 @@
 2. Gestion du tour par tour --> game manager
 
 3. Unités :
-    + Modélisation
+    + Modélisation :
+        * Golems de pierre (En cours, reste amélioration du modèle + animations)
+        * Gnome (pas commencé)
     + Implémenter le système de caractéristiques : vie, pa, pm
     + Déplacement sur la map
     + Implémenter le système de classes
